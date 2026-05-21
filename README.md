@@ -1,10 +1,10 @@
-## 📌 Visão Geral do Projeto
+## Visão Geral do Projeto
 A empresa fictícia Caramelo Pet enfrentava dificuldades para consolidar e analisar seus dados comerciais, pois as informações estavam distribuídas em diversos arquivos Excel separados por:
 País | Cidade | Produtos | Categorias e subcategorias | Vendedores | Vendas
 
 O gerente comercial, Augusto, precisava de uma solução centralizada para acompanhar os resultados da empresa de forma estratégica e visual.
 
-## 📌 Objetivo do Projeto
+## Objetivo do Projeto
 Desenvolver um dashboard analítico no Power BI capaz de:
 
 * Integrar múltiplas fontes de dados;
@@ -20,7 +20,7 @@ Desenvolver um dashboard analítico no Power BI capaz de:
 * DAX
 * Microsoft Excel
 
-## 🛠️ Estrutura do Projeto (Power BI Project - .pbip)
+## Estrutura do Projeto (Power BI Project - .pbip)
 Este projeto foi salvo no formato de projeto do Power BI (`.pbip`), permitindo o controle de versão de código e uma separação clara entre a camada de dados e de relatório.
 
 A estrutura do repositório está organizada da seguinte forma:
@@ -35,11 +35,11 @@ O projeto foi desenvolvido utilizando o modelo estrela (Star Schema), proporcion
 O processo de preparação dos dados foi realizado utilizando o Power Query.
 
 Etapas executadas:
-### 📥 Importação dos arquivos
+### Importação dos arquivos
 
 Foram importados múltiplos arquivos Excel contendo informações de vendas e tabelas dimensionais.
 
-### 🧹 Padronização dos dados
+### Padronização dos dados
 
 Foram realizados tratamentos como:
 
@@ -48,7 +48,7 @@ Foram realizados tratamentos como:
 * Remoção de inconsistências;
 * Ajustes em dados nulos;
 * Criação de colunas auxiliares.
-### 🧩 Modelagem dimensional
+### Modelagem dimensional
 
 O modelo foi estruturado utilizando tabelas fato e dimensão.
 
@@ -64,13 +64,13 @@ O modelo foi estruturado utilizando tabelas fato e dimensão.
 * d_calendario
 ---
 
-## 📈 Inteligência de Negócios & Métricas DAX
+## Inteligência de Negócios & Métricas DAX
 
 O projeto conta com uma tabela centralizada de medidas (`Medidas`) organizadas por pastas funcionais (*Vendas* e *Vendedores*), focadas em responder a perguntas estratégicas de negócio.
 
 ---
 
-### 🧮 Fórmulas Destacadas e Engenharia de Contexto
+### Fórmulas Destacadas e Engenharia de Contexto
 
 #### 1. Cálculo Iterativo de Receita e Custo (Contexto de Linha)
 Como os valores unitários e custos padrão residem na dimensão `d_produto` e o volume transacional está na fato `f_vendas`, utilizei funções iterativas (`SUMX`) combinadas com a `RELATED` para calcular os totais dinamicamente sem inflar o tamanho do arquivo com colunas calculadas desnecessárias.
@@ -83,7 +83,8 @@ Como os valores unitários e custos padrão residem na dimensão `d_produto` e o
         f_vendas,
         f_vendas[Unidades] * RELATED(d_produto[PrecoVarejo])
     )
-    ```
+```
+
 *   **Custo Total:**
     
 ```dax
@@ -92,7 +93,7 @@ Como os valores unitários e custos padrão residem na dimensão `d_produto` e o
         f_vendas,
         f_vendas[Unidades] * RELATED(d_produto[CustoPadrao])
     )
-    ```
+```
 
 #### 2. Análise de Market Share (% Partição)
 Para calcular a representatividade de cada produto ou categoria no faturamento global, foi criada uma métrica utilizando a função `ALL()`, que remove as restrições dos filtros visuais para estabelecer uma base fixa de comparação.
@@ -106,7 +107,7 @@ Para calcular a representatividade de cada produto ou categoria no faturamento g
         CALCULATE([ReceitaBruta], ALL()),
         0
     )
-    ```
+```
 
 #### 3. Média Móvel e Análise Temporal Mensal
 Para suavizar distorções diárias e focar na tendência de faturamento de médio prazo, foi implementada a média calculada através dos meses ativos usando `AVERAGEX` e `VALUES`.
@@ -121,7 +122,7 @@ Para suavizar distorções diárias e focar na tendência de faturamento de méd
             [ReceitaBruta]
         )
     )
-    ```
+```
 
 #### 4. Gamificação e Análise de Performance Comercial (Ranking Dinâmico)
 Para o time de vendas, foi desenvolvida uma análise de performance baseada na receita gerada. Utilizou-se a função `RANKX` com o parâmetro `DENSE` para evitar saltos numéricos em caso de empate, integrada a uma regra de UI/UX baseada em `SWITCH` para exibição de indicadores visuais (KPIs com emojis) diretamente nas tabelas.
@@ -137,7 +138,7 @@ Para o time de vendas, foi desenvolvida uma análise de performance baseada na r
         DESC,
         DENSE
     )
-    ```
+```
 *   **Indicador Visual (UI/UX):**
     
 ```dax
@@ -149,7 +150,7 @@ Para o time de vendas, foi desenvolvida uma análise de performance baseada na r
         3, "🥉",   
         "•"
     )
-    ```
+```
 
 ---
 ## 📂 Como Explorar o Código no GitHub
