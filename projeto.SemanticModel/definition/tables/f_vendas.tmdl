@@ -1,0 +1,121 @@
+table f_vendas
+	lineageTag: d83fac1e-bc86-4689-9bf2-72b79aa2c490
+
+	column ChavePrimariaVendas
+		dataType: string
+		lineageTag: 1c82bf8d-f774-47aa-b4bf-bf5488c5e3dc
+		summarizeBy: none
+		sourceColumn: ChavePrimariaVendas
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProdutoID
+		dataType: string
+		lineageTag: 76938c7e-8d13-4df4-8362-33ee0d84a63c
+		summarizeBy: none
+		sourceColumn: ProdutoID
+
+		annotation SummarizationSetBy = Automatic
+
+	column RepresentanteID
+		dataType: string
+		lineageTag: ddd2ce11-24f1-4810-9ddf-a26b4337bb3b
+		summarizeBy: none
+		sourceColumn: RepresentanteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Pais
+		dataType: string
+		lineageTag: ff26bb54-344b-424a-8f46-f2181f7455ad
+		summarizeBy: none
+		sourceColumn: Pais
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cidade
+		dataType: string
+		lineageTag: 394d65da-d160-49aa-a741-1f7514a19a92
+		summarizeBy: none
+		sourceColumn: Cidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column Data
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e4edb84d-a2e1-4bb0-9351-89588ae38cf1
+		summarizeBy: none
+		sourceColumn: Data
+
+		variation Variation
+			isDefault
+			relationship: 1b5a95dd-cb2f-4e03-84bc-9b34e8268b40
+			defaultHierarchy: LocalDateTable_84ee4e5b-f41c-4605-86d2-6a2fa5da25c9.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Unidades
+		dataType: decimal
+		formatString: #,0
+		lineageTag: 27ba688c-e416-4609-809e-7e55ffa49d8f
+		summarizeBy: sum
+		sourceColumn: Unidades
+
+		annotation SummarizationSetBy = Automatic
+
+	column PercentualDoCustoPadrão
+		dataType: double
+		lineageTag: 65523931-b1c6-4189-9803-c2043945e734
+		summarizeBy: sum
+		sourceColumn: PercentualDoCustoPadrão
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DescontoDeReceita
+		dataType: double
+		lineageTag: 97fcec8c-cfeb-4664-9a04-b55e4e56169a
+		summarizeBy: sum
+		sourceColumn: DescontoDeReceita
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DataAnoMes =
+			
+			FORMAT(f_vendas[Data], "YYYY-MM")
+		lineageTag: fcdec6f4-9210-45f1-a999-b8ae6008f8b7
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition f_vendas = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\Igor\Downloads\A6 - Pratique (1)\dados_exercicio_entrega\Vendas.xlsx"), null, true),
+				    Vendas_Sheet = Fonte{[Item="Vendas",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Vendas_Sheet, [PromoteAllScalars=true]),
+				    #"Dividir Coluna por Delimitador" = Table.SplitColumn(#"Cabeçalhos Promovidos", "Localização", Splitter.SplitTextByDelimiter(";", QuoteStyle.Csv), {"Localização.1", "Localização.2"}),
+				    #"Valor Substituído1" = Table.ReplaceValue(#"Dividir Coluna por Delimitador",".",",",Replacer.ReplaceText,{"DescontoDeReceita"}),
+				    #"Valor Substituído" = Table.ReplaceValue(#"Valor Substituído1",".",",",Replacer.ReplaceText,{"PercentualDoCustoPadrão"}),
+				    #"Tipo Alterado/Percentual Receita" = Table.TransformColumnTypes(#"Valor Substituído",{{"DescontoDeReceita", Percentage.Type}}),
+				    #"Tipo Alterado1/Data" = Table.TransformColumnTypes(#"Tipo Alterado/Percentual Receita",{{"Data", type date}}),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Tipo Alterado1/Data",{{"PercentualDoCustoPadrão", Percentage.Type}, {"Unidades", Currency.Type}}),
+				    #"Colunas Renomeadas1" = Table.RenameColumns(#"Tipo Alterado",{{"Localização.1", "Pais"}, {"Localização.2", "Cidade"}}),
+				    #"Tipo Alterado2" = Table.TransformColumnTypes(#"Colunas Renomeadas1",{{"ChavePrimariaVendas", type text}, {"ProdutoID", type text}, {"RepresentanteID", type text}}),
+				    #"Valor Substituído2" = Table.ReplaceValue(#"Tipo Alterado2"," ","",Replacer.ReplaceText,{"ChavePrimariaVendas"}),
+				    #"Valor Substituído3" = Table.ReplaceValue(#"Valor Substituído2"," ","",Replacer.ReplaceText,{"ProdutoID"}),
+				    #"Valor Substituído4" = Table.ReplaceValue(#"Valor Substituído3"," ","",Replacer.ReplaceText,{"RepresentanteID"})
+				in
+				    #"Valor Substituído4"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

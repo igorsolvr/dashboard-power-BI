@@ -1,0 +1,51 @@
+table d_geografia
+	lineageTag: 92da83db-0fc0-4a37-b956-f13ed458f314
+
+	column País
+		dataType: string
+		lineageTag: 7580c6ba-72b3-4dae-932c-0b6aee8cd0e5
+		summarizeBy: none
+		sourceColumn: País
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cidade
+		dataType: string
+		lineageTag: 25fad653-acbb-40ca-abda-f60a82e13d00
+		summarizeBy: none
+		sourceColumn: Cidade
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Wikipedia
+		dataType: string
+		lineageTag: 142dfec3-8c30-4edc-a209-f1220b16e73f
+		summarizeBy: none
+		sourceColumn: Wikipedia
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition d_geografia = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\Igor\Downloads\A6 - Pratique (1)\dados_exercicio_entrega\Geografia.xlsx"), null, true),
+				    Geografia_Sheet = Fonte{[Item="Geografia",Kind="Sheet"]}[Data],
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Geografia_Sheet,{{"Column1", type text}, {"Column2", type text}, {"Column3", type text}}),
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Tipo Alterado", [PromoteAllScalars=true]),
+				    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"País", type text}, {"Cidade", type text}, {"Wikipedia", type text}})
+				in
+				    #"Tipo Alterado1"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

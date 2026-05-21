@@ -1,0 +1,25 @@
+relationship 1b5a95dd-cb2f-4e03-84bc-9b34e8268b40
+	joinOnDateBehavior: datePartOnly
+	fromColumn: f_vendas.Data
+	toColumn: LocalDateTable_84ee4e5b-f41c-4605-86d2-6a2fa5da25c9.Date
+
+relationship AutoDetected_9342d04f-9451-46a2-a512-a460c6cf13f0
+	fromColumn: f_vendas.Cidade
+	toColumn: d_geografia.Cidade
+
+relationship AutoDetected_a3539021-6833-4bbd-92ef-f39a90c74fd8
+	fromColumn: f_vendas.RepresentanteID
+	toColumn: d_representanteVendas.RepresentanteID
+
+relationship AutoDetected_c59d2913-55b1-4827-ae23-be689606535f
+	fromColumn: f_vendas.ProdutoID
+	toColumn: d_produto.ProdutoID
+
+relationship AutoDetected_35382ba7-8372-4bc7-9a48-23acc0d5ef32
+	fromColumn: d_subCategorias.CategoriaKey
+	toColumn: d_categorias.CategoriaKey
+
+relationship AutoDetected_7a735411-d998-4a6b-9d35-b21a69990c43
+	fromColumn: d_produto.SubcategoriaID
+	toColumn: d_subCategorias.SubCategoriaKey
+

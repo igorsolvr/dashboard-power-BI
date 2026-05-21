@@ -1,0 +1,171 @@
+table Medidas
+	lineageTag: 7987d0ed-d4dc-414a-9d03-6c892679da72
+
+	/// Indicador de performance que representa a participação percentual de um produto, país, categoria ou vendedor em relação à receita bruta total da empresa.
+	measure %Receita = ```
+			
+			    DIVIDE(
+			        [ReceitaBruta],
+			        [ReceitaBrutaFixa],
+			        0
+			    )
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Vendas
+		lineageTag: 3a75a5d8-2a03-425d-a523-4476f788e0d8
+
+	/// Métrica financeira que calcula o custo total dos produtos vendidos, considerando a quantidade de itens comercializados multiplicada pelo custo padrão de cada produto.
+	measure CustoTotal = ```
+			
+			SUMX(
+			    f_vendas,
+			    f_vendas[Unidades] * 
+			    RELATED(d_produto[CustoPadrao])
+			    )
+			```
+		formatString: #,0.00
+		displayFolder: Vendas
+		lineageTag: 020f4318-6cba-4cb6-ad99-094083f2f511
+
+	/// Indicador financeiro que representa o ganho obtido pela empresa após descontar os custos dos produtos vendidos da receita bruta total.
+	measure LucroBruto = [ReceitaBruta] - [CustoTotal]
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Vendas
+		lineageTag: 24c00285-81b5-4204-bebe-0ba457949f31
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Indicador de performance que representa o percentual de lucro obtido sobre a receita bruta total.
+	measure Margem% =
+			
+			DIVIDE(
+			    [LucroBruto],
+			    [ReceitaBruta],
+			    0
+			)
+		formatString: #,0.00%;-#,0.00%;#,0.00%
+		displayFolder: Vendas
+		lineageTag: 5440dea7-dfe1-49dd-a268-1c0a6c1a4e1b
+
+	/// Indicador que calcula a média de receita bruta obtida por mês ao longo do período analisado.
+	/// A medida utiliza a função AVERAGEX para percorrer cada mês distinto e calcular a média da receita bruta mensal, permitindo analisar o desempenho médio de faturamento da empresa.
+	measure MediaReceitaMensal =
+			
+			CALCULATE(
+			    AVERAGEX(
+			        VALUES(f_vendas[DataAnoMes]),
+			        [ReceitaBruta]
+			))
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		displayFolder: Vendas
+		lineageTag: 141e848e-7f84-4301-8f14-118e8a051616
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Métrica financeira que calcula o valor total gerado pelas vendas realizadas pela empresa.
+	/// A medida multiplica a quantidade vendida de cada item pelo respectivo preço de varejo do produto e soma todos os resultados, permitindo analisar o faturamento total da operação.
+	measure ReceitaBruta = ```
+			
+			 SUMX(
+			    f_vendas,
+			    f_vendas[Unidades]*RELATED(d_produto[PrecoVarejo])
+			    )
+			```
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Vendas
+		lineageTag: b356709b-8f73-4b60-81ad-5c55a91d8b99
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Métrica utilizada para calcular a receita bruta total da empresa desconsiderando qualquer filtro aplicado no relatório.
+	/// A função ALL() remove os filtros do contexto atual, permitindo utilizar a receita total fixa como base para cálculos percentuais e comparativos.
+	measure ReceitaBrutaFixa =
+			
+			CALCULATE(
+			    [ReceitaBruta],
+			    ALL()
+			    )
+		displayFolder: Vendas
+		lineageTag: 134f5f67-12c9-42a4-9f6e-95e246354c7e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Indicador de performance que calcula o valor médio gerado por unidade vendida.
+	/// A medida divide a receita bruta total pela quantidade total de unidades comercializadas, permitindo analisar o valor médio obtido em cada venda realizada.
+	measure TicketMedio = ```
+			
+			    DIVIDE(
+			        [ReceitaBruta],
+			        SUM(f_vendas[Unidades]),
+			        0
+			    )
+			```
+		formatString: "R$"\ #,0.00;-"R$"\ #,0.00;"R$"\ #,0.00
+		displayFolder: Vendas
+		lineageTag: 85c51927-3afe-4116-9c12-654a578e2a6c
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	/// Métrica utilizada para representar visualmente a posição dos vendedores em um ranking de desempenho.
+	/// A medida utiliza a função SWITCH para exibir medalhas aos três primeiros colocados e um símbolo padrão para os demais, facilitando a identificação visual dos melhores desempenhos no relatório.
+	measure IconeRanking = ```
+			
+			SWITCH(
+			    [RankingVendedor],
+			    1, "🥇",
+			    2, "🥈",
+			    3, "🥉",   
+			    "•"
+			)
+			```
+		displayFolder: Vendedores
+		lineageTag: b057e10f-0d1a-49c5-8edb-641ce1d45ce4
+
+	/// Indicador de performance que classifica os vendedores com base na receita bruta gerada.
+	/// A medida utiliza a função RANKX para criar um ranking em ordem decrescente, considerando apenas os vendedores visíveis no contexto atual do relatório. O método DENSE garante que não existam saltos na numeração do ranking em casos de empate.
+	measure RankingVendedor =
+			
+			RANKX(
+			    ALLSELECTED(d_representanteVendas[NomeRepresentante]),
+			    [ReceitaBruta],
+			    ,
+			    DESC,
+			    DENSE
+			)
+		formatString: 0
+		displayFolder: Vendedores
+		lineageTag: 9ea6bcc1-feb0-4fe7-baee-e6eb793cae94
+
+	/// Métrica utilizada para calcular a quantidade total de unidades vendidas pela empresa.
+	/// A medida realiza a soma de todas as unidades registradas na tabela de vendas, permitindo analisar o volume total comercializado no período selecionado.
+	measure QuantidadeTotal =
+			
+			CALCULATE(
+			    SUM(f_vendas[Unidades])
+			    )
+		formatString: #,0.00
+		displayFolder: Vendas
+		lineageTag: babfda91-284e-4591-b428-702cc9d355da
+
+	column 'Coluna 1'
+		dataType: string
+		isHidden
+		lineageTag: f38b916f-833e-4375-99e0-1e7590162a34
+		summarizeBy: none
+		sourceColumn: Coluna 1
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+

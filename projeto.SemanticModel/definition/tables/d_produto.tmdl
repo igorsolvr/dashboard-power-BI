@@ -1,0 +1,73 @@
+table d_produto
+	lineageTag: e26a9353-f266-4cdb-92e5-baca756ace1b
+
+	column ProdutoID
+		dataType: string
+		lineageTag: 24723f82-8331-4d72-8592-ab735311efeb
+		summarizeBy: none
+		sourceColumn: ProdutoID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubcategoriaID
+		dataType: string
+		lineageTag: 02eb8f91-b5d3-44c0-b7ec-e7dc77d49bf9
+		summarizeBy: none
+		sourceColumn: SubcategoriaID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cor
+		dataType: string
+		lineageTag: 83507476-e1f8-4059-9ec7-63d1a637d7ec
+		summarizeBy: none
+		sourceColumn: Cor
+
+		annotation SummarizationSetBy = Automatic
+
+	column NomeProduto
+		dataType: string
+		lineageTag: fbec51ad-439a-4ce1-93aa-82a09c99592e
+		summarizeBy: none
+		sourceColumn: NomeProduto
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrecoVarejo
+		dataType: double
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: cee76c46-9f09-48d6-8fc5-0ec0dee8fb43
+		summarizeBy: sum
+		sourceColumn: PrecoVarejo
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustoPadrao
+		dataType: double
+		lineageTag: 8ba0f817-bd3c-4fd6-85a6-5d7d80499785
+		summarizeBy: sum
+		sourceColumn: CustoPadrao
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition d_produto = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\Igor\Downloads\A6 - Pratique (1)\dados_exercicio_entrega\Produto.xlsx"), null, true),
+				    Produto_Sheet = Fonte{[Item="Produto",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Produto_Sheet, [PromoteAllScalars=true]),
+				    #"Valor Substituído" = Table.ReplaceValue(#"Cabeçalhos Promovidos","x","",Replacer.ReplaceText,{"ProdutoID"}),
+				    #"Valor Substituído1" = Table.ReplaceValue(#"Valor Substituído","Red","Vermelho",Replacer.ReplaceText,{"Cor"}),
+				    #"Valor Substituído2" = Table.ReplaceValue(#"Valor Substituído1",".",",",Replacer.ReplaceText,{"PrecoVarejo"}),
+				    #"Valor Substituído3" = Table.ReplaceValue(#"Valor Substituído2",".",",",Replacer.ReplaceText,{"CustoPadrao"}),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Valor Substituído3",{{"PrecoVarejo", type number}, {"CustoPadrao", type number}, {"SubcategoriaID", type text}, {"ProdutoID", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,27 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["d_geografia","d_representanteVendas","f_vendas","d_produto","d_subCategorias","d_categorias","Medidas"]
+
+annotation PBI_ProTooling = ["DaxQueryView_Desktop","DevMode"]
+
+ref table d_geografia
+ref table d_representanteVendas
+ref table f_vendas
+ref table DateTableTemplate_732e8975-1507-4c2b-ab52-c85a5f50dd45
+ref table LocalDateTable_84ee4e5b-f41c-4605-86d2-6a2fa5da25c9
+ref table d_produto
+ref table d_subCategorias
+ref table d_categorias
+ref table DocMedidasDAX
+ref table Medidas
+
+ref cultureInfo pt-BR
+

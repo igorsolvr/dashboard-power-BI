@@ -1,0 +1,37 @@
+table d_representanteVendas
+	lineageTag: 8ede6c79-d185-41cf-a73b-68f555ddb2a1
+
+	column RepresentanteID
+		dataType: string
+		lineageTag: 35982ebe-3d71-4fae-83e6-b8743fd5522c
+		summarizeBy: none
+		sourceColumn: RepresentanteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column NomeRepresentante
+		dataType: string
+		lineageTag: 12ce3530-6901-42bb-b6e4-2d8288ba3b81
+		summarizeBy: none
+		sourceColumn: NomeRepresentante
+
+		annotation SummarizationSetBy = Automatic
+
+	partition d_representanteVendas = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\Igor\Downloads\A6 - Pratique (1)\dados_exercicio_entrega\RepresentanteVendas.xlsx"), null, true),
+				    RepresentanteVendas_Sheet = Fonte{[Item="RepresentanteVendas",Kind="Sheet"]}[Data],
+				    #"Tipo Alterado" = Table.TransformColumnTypes(RepresentanteVendas_Sheet,{{"Column1", type text}, {"Column2", type text}}),
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Tipo Alterado", [PromoteAllScalars=true]),
+				    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"RepresentanteID", type text}, {"NomeRepresentante", type text}}),
+				    #"Valor Substituído" = Table.ReplaceValue(#"Tipo Alterado1","ID - ","",Replacer.ReplaceText,{"RepresentanteID"}),
+				    #"Valor Substituído1" = Table.ReplaceValue(#"Valor Substituído"," ","",Replacer.ReplaceText,{"RepresentanteID"})
+				in
+				    #"Valor Substituído1"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

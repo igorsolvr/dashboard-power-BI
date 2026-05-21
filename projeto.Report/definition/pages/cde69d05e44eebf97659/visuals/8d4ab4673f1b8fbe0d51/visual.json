@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "8d4ab4673f1b8fbe0d51",
+  "position": {
+    "x": 1472.1518987341772,
+    "y": 113.92405063291139,
+    "z": 11000,
+    "height": 479.746835443038,
+    "width": 383.54430379746833,
+    "tabOrder": 3000
+  },
+  "visualGroup": {
+    "displayName": "filtros",
+    "groupMode": "ScaleMode"
+  },
+  "isHidden": true
+}

@@ -1,0 +1,44 @@
+table d_subCategorias
+	lineageTag: 942b7f39-c2cf-4093-b1d9-89b50a1ce8c7
+
+	column SubCategoriaKey
+		dataType: string
+		lineageTag: 70b7920f-4bf4-4500-93ad-8f2558e6f09b
+		summarizeBy: none
+		sourceColumn: SubCategoriaKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CategoriaKey
+		dataType: string
+		lineageTag: 300cf091-53fb-434c-b23c-03bb9fa37718
+		summarizeBy: none
+		sourceColumn: CategoriaKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubCategoriaNome
+		dataType: string
+		lineageTag: 3f95a346-35d8-4cb9-8224-74819f465d14
+		summarizeBy: none
+		sourceColumn: SubCategoriaNome
+
+		annotation SummarizationSetBy = Automatic
+
+	partition d_subCategorias = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\Igor\Downloads\A6 - Pratique (1)\dados_exercicio_entrega\SubCategorias.xlsx"), null, true),
+				    SubCategorias_Sheet = Fonte{[Item="SubCategorias",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(SubCategorias_Sheet, [PromoteAllScalars=true]),
+				    #"Valor Substituído" = Table.ReplaceValue(#"Cabeçalhos Promovidos","ID - ","",Replacer.ReplaceText,{"CategoriaKey"}),
+				    #"Valor Substituído1" = Table.ReplaceValue(#"Valor Substituído","ID -","",Replacer.ReplaceText,{"CategoriaKey"}),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Valor Substituído1",{{"SubCategoriaKey", type text}, {"CategoriaKey", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

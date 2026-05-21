@@ -1,0 +1,34 @@
+table d_categorias
+	lineageTag: bbf88ead-d4b3-49e0-87d9-b135b11044cb
+
+	column CategoriaKey
+		dataType: string
+		lineageTag: abfcf542-1f26-48ed-8e2a-fc66e3300885
+		summarizeBy: none
+		sourceColumn: CategoriaKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Categoria
+		dataType: string
+		lineageTag: 373cb8fb-7808-459f-be24-f6002e3b4540
+		summarizeBy: none
+		sourceColumn: Categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	partition d_categorias = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\Igor\Downloads\A6 - Pratique (1)\dados_exercicio_entrega\Categorias.xlsx"), null, true),
+				    Categorias_Sheet = Fonte{[Item="Categorias",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Categorias_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"CategoriaKey", type text}, {"Categoria", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
