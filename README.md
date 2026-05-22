@@ -124,7 +124,7 @@ Para suavizar distorções diárias e focar na tendência de faturamento de méd
     )
 ```
 
-#### 4. Gamificação e Análise de Performance Comercial (Ranking Dinâmico)
+#### 4. Análise de Performance Comercial (Ranking Dinâmico)
 Para o time de vendas, foi desenvolvida uma análise de performance baseada na receita gerada. Utilizou-se a função `RANKX` com o parâmetro `DENSE` para evitar saltos numéricos em caso de empate, integrada a uma regra de UI/UX baseada em `SWITCH` para exibição de indicadores visuais (KPIs com emojis) diretamente nas tabelas.
 
 *   **Posição no Ranking:**
@@ -157,4 +157,8 @@ Para o time de vendas, foi desenvolvida uma análise de performance baseada na r
 Você pode analisar o desenvolvimento deste projeto diretamente pelo navegador:
 * **Métricas e DAX:** Navegue até `projeto.SemanticModel/definition/tables/Medidas.tmdl` (ou na pasta de tabelas) para visualizar as regras de negócio escritas.
 * **Consultas Power Query (M):** Os scripts de ETL (Extração, Transformação e Carga) podem ser encontrados dentro dos arquivos `.tmdl` de cada tabela na pasta `projeto.SemanticModel/definition/tables/`.
+
+## Dashboard
+
+
 
