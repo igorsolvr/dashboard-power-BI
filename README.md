@@ -160,5 +160,15 @@ Você pode analisar o desenvolvimento deste projeto diretamente pelo navegador:
 
 ## Dashboard
 
+### Página principal:
+<img width="1416" height="789" alt="Image" src="https://github.com/user-attachments/assets/e056f35e-a6cc-4574-aef0-b783547e1dee" />
 
+### Análise de Produtos:
+<img width="1412" height="790" alt="Image" src="https://github.com/user-attachments/assets/14287020-4dd6-4dc3-a799-3d36fabc21fa" />
+
+#Análise Temporal:
+<img width="1404" height="793" alt="Image" src="https://github.com/user-attachments/assets/58b5154d-313c-445f-ac7c-83d97ceee03f" />
+
+#Documentação DAX:
+<img width="1401" height="788" alt="Image" src="https://github.com/user-attachments/assets/20b36eb2-f6c3-466c-9314-b894b8a13d7b" />
 
